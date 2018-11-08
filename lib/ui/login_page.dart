@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:courier/ui/home_page.dart';
 
@@ -95,21 +96,25 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.fill),
           ),
           child: new Center(
+              child: new ClipRect(
+            child: new BackdropFilter(
+              filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: new Container(
-            child: Form(
-              key: formKey,
-              child: ListView(
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                children: <Widget>[
-                  logo,
-                  SizedBox(height: 48.0),
-                  user,
-                  SizedBox(height: 8.0),
-                  password,
-                  SizedBox(height: 24.0),
-                  loginButton
-                ],
+                child: Form(
+                    key: formKey,
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      children: <Widget>[
+                        logo,
+                        SizedBox(height: 48.0),
+                        user,
+                        SizedBox(height: 8.0),
+                        password,
+                        SizedBox(height: 24.0),
+                        loginButton
+                      ],
+                    )),
               ),
             ),
           ))),

@@ -18,6 +18,7 @@ class CourierApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
+        
       ),
       home: LoginPage(),
       routes: routes,

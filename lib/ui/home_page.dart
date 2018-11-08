@@ -3,52 +3,51 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   static String tag = 'home-page';
 
+  
   @override
   Widget build(BuildContext context) {
-    final alucard = Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: CircleAvatar(
-          radius: 72.0,
-          backgroundColor: Colors.transparent,
-          backgroundImage: AssetImage('assets/alucard.jpg'),
+    final userDrawer = new UserAccountsDrawerHeader(
+      accountName: new Text('Hans Code',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      accountEmail: new Text('hans.herrerab@gmail.com',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      currentAccountPicture: new GestureDetector(
+        child: new CircleAvatar(
+          backgroundImage: new NetworkImage(
+              'https://media.licdn.com/dms/image/C4E03AQG03m8cmOmULw/profile-displayphoto-shrink_200_200/0?e=1547078400&v=beta&t=Z8L1ucwfX_5mjqMtiwCqHVcbcLAD-H1FXCAbDR67r6M'),
         ),
       ),
+      decoration: new BoxDecoration(
+          image: new DecorationImage(
+              fit: BoxFit.fill,
+              image: new NetworkImage(
+                  'https://media.licdn.com/dms/image/C4E16AQGNw5mXr6qkXA/profile-displaybackgroundimage-shrink_350_1400/0?e=1547078400&v=beta&t=FsEZD5U_PCXwqQWykT50yPW2xGik_fh3dGb0UPXEUq4'))),
     );
 
-    final welcome = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Welcome Alucard',
-        style: TextStyle(fontSize: 28.0, color: Colors.white),
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Courier App'),
+        backgroundColor: Colors.yellowAccent,
       ),
-    );
-
-    final lorem = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec hendrerit condimentum mauris id tempor. Praesent eu commodo lacus. Praesent eget mi sed libero eleifend tempor. Sed at fringilla ipsum. Duis malesuada feugiat urna vitae convallis. Aliquam eu libero arcu.',
-        style: TextStyle(fontSize: 16.0, color: Colors.white),
+      drawer: new Drawer(
+          child: new ListView(
+        children: <Widget>[
+          userDrawer,
+          new ListTile(
+            title: new Text('Ordenes'),
+            trailing: new Icon(Icons.traffic),
+            onTap: () => Navigator.of(context).pop(),
+          ),
+          new Divider(),
+          new ListTile(
+            title: new Text('Historial'),
+            trailing: new Icon(Icons.history),
+          )
+        ],
+      )),
+      body: new Center(
+        child: new Text('Home'),
       ),
-    );
-
-    final body = Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.all(28.0),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Colors.blue,
-          Colors.lightBlueAccent,
-        ]),
-      ),
-      child: Column(
-        children: <Widget>[alucard, welcome, lorem],
-      ),
-    );
-
-    return Scaffold(
-      body: body,
     );
   }
 }

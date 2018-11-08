@@ -22,17 +22,18 @@ class NetworkUtil {
     });
   }
 
-  Future<dynamic> post(String url, {Map headers, body, encoding}) {
-    return http
-        .post(url, body: body, headers: headers, encoding: encoding)
-        .then((http.Response response) {
-      final String res = response.body;
-      final int statusCode = response.statusCode;
-
-      if (statusCode < 200 || statusCode > 400 || json == null) {
+  Future<dynamic> post(String url, {Map headers, body, encoding}) async {
+    try {
+      final response = await http.post(url,
+          body: body, headers: headers, encoding: encoding);
+      if (response.statusCode == 200) {
+        return _decoder.convert(response.body);
+      } else {
         throw new Exception("Error al obtener información");
       }
-      return _decoder.convert(res);
-    });
+    } catch (exception) {
+      print(exception);
+      throw new Exception("Error al obtener información");
+    }
   }
 }

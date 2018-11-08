@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/login_page.dart';
+import 'package:courier/ui/login/login_page.dart';
 import 'ui/home_page.dart';
 
 void main() => runApp(new CourierApp());

@@ -46,16 +46,17 @@ class _LoginPageState extends State<LoginPage>
   }
 
   @override
-  onAuthStateChanged(AuthState state) async{
+  onAuthStateChanged(AuthState state) async {
     print(state);
-    if (state == AuthState.LOGGED_IN){
-       var db = new DatabaseHelper();
-       var user =await db.getUser();
-        Navigator.push(_ctx, MaterialPageRoute(builder: (_ctx) => HomePage(
-                                          user: user,
-                                        )));
-                          }
-      Navigator.of(_ctx).pushReplacementNamed(HomePage.tag, result: user);
+    if (state == AuthState.LOGGED_IN) {
+      var db = new DatabaseHelper();
+      var user = await db.getUser();
+      Navigator.push(
+          _ctx,
+          MaterialPageRoute(
+              builder: (_ctx) => HomePage(
+                    user: user,
+                  )));
     }
   }
 
@@ -69,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void onLoginSuccess(User user) async {
     _showSnackBar(user.toString());
-    setState( () => _isLoading = false);
+    setState(() => _isLoading = false);
     var db = new DatabaseHelper();
     await db.saveUser(user);
     var authStateProvider = new AuthStateProvider();
@@ -128,7 +129,7 @@ class _LoginPageState extends State<LoginPage>
       color: Colors.blueAccent[100],
     );
 
-    final loginForm =  new Column(
+    final loginForm = new Column(
       children: <Widget>[
         new Form(
           key: formKey,
@@ -173,7 +174,7 @@ class _LoginPageState extends State<LoginPage>
                 width: 300.0,
                 decoration: new BoxDecoration(
                   color: Colors.grey.shade200.withOpacity(0.5),
-                ),                
+                ),
               ),
             ),
           ))),

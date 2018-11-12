@@ -4,6 +4,7 @@ import 'package:courier/ui/auth.dart';
 import 'package:courier/data/database_helper.dart';
 import 'package:courier/models/user.dart';
 import 'package:courier/ui/login/login_screen_presenter.dart';
+import 'package:courier/ui/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -21,7 +22,6 @@ class _LoginPageState extends State<LoginPage>
 
   String _username;
   String _password;
-
   LoginScreenPresenter _presenter;
 
   _LoginPageState() {
@@ -46,12 +46,20 @@ class _LoginPageState extends State<LoginPage>
   }
 
   @override
-  onAuthStateChanged(AuthState state) {
-    if (state == AuthState.LOGGED_IN)
-      Navigator.of(_ctx).pushReplacementNamed("/home");
+  onAuthStateChanged(AuthState state) async{
+    print(state);
+    if (state == AuthState.LOGGED_IN){
+       var db = new DatabaseHelper();
+       var user =await db.getUser();
+        Navigator.push(_ctx, MaterialPageRoute(builder: (_ctx) => HomePage(
+                                          user: user,
+                                        )));
+                          }
+      Navigator.of(_ctx).pushReplacementNamed(HomePage.tag, result: user);
+    }
   }
 
-    @override
+  @override
   void onLoginError(String errorTxt) {
     print(errorTxt);
     _showSnackBar(errorTxt);
@@ -61,7 +69,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void onLoginSuccess(User user) async {
     _showSnackBar(user.toString());
-    setState(() => _isLoading = false);
+    setState( () => _isLoading = false);
     var db = new DatabaseHelper();
     await db.saveUser(user);
     var authStateProvider = new AuthStateProvider();
@@ -72,7 +80,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     _ctx = context;
 
-    final logo = Hero(
+    final heroLogo = Hero(
       tag: 'hero',
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
@@ -84,45 +92,66 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
 
-    final user = TextFormField(
-      autofocus: true,
-      initialValue: 'hans0001',
-      keyboardType: TextInputType.text,
-      decoration: InputDecoration(
-          hintText: 'Usuario',
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-      validator: (val) => val.length == 0 ? 'Digíte usuario.' : null,
-      onSaved: (val) => _username = val,
+    final user = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          autofocus: false,
+          initialValue: '45781054',
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+              hintText: 'Usuario',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0))),
+          validator: (val) => val.length == 0 ? 'Digíte usuario.' : null,
+          onSaved: (val) => _username = val,
+        ));
+
+    final password = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          autofocus: false,
+          initialValue: 'scmj010400',
+          decoration: InputDecoration(
+              hintText: 'Password',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0))),
+          validator: (val) => val.length < 6 ? 'Digíte password.' : null,
+          onSaved: (val) => _password = val,
+          obscureText: true,
+        ));
+
+    final loginButton = new RaisedButton(
+      onPressed: _submit,
+      child: new Text("Login"),
+      color: Colors.blueAccent[100],
     );
 
-    final password = TextFormField(
-      autofocus: false,
-      initialValue: '123456',
-      decoration: InputDecoration(
-          hintText: 'Password',
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-      validator: (val) => val.length < 6 ? 'Digíte password.' : null,
-      onSaved: (val) => _password = val,
-      obscureText: true,
-    );
-
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
-        borderRadius: BorderRadius.circular(40.0),
-        shadowColor: Colors.white,
-        child: MaterialButton(
-          minWidth: 200.0,
-          height: 50.0,
-          onPressed: _submit,
-          color: Colors.blueAccent[100],
-          child: Text('Login', style: TextStyle(color: Colors.white)),
+    final loginForm =  new Column(
+      children: <Widget>[
+        new Form(
+          key: formKey,
+          child: new Column(
+            children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: heroLogo,
+              ),
+              new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: user,
+              ),
+              new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: password,
+              ),
+            ],
+          ),
         ),
-      ),
+        _isLoading ? new CircularProgressIndicator() : loginButton
+      ],
+      crossAxisAlignment: CrossAxisAlignment.center,
     );
 
     return Scaffold(
@@ -139,22 +168,12 @@ class _LoginPageState extends State<LoginPage>
             child: new BackdropFilter(
               filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: new Container(
-                child: Form(
-                  key: formKey,
-                  child: ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 48.0),
-                      user,
-                      SizedBox(height: 8.0),
-                      password,
-                      SizedBox(height: 24.0),
-                      loginButton
-                    ],
-                  ),
-                ),
+                child: loginForm,
+                height: 300.0,
+                width: 300.0,
+                decoration: new BoxDecoration(
+                  color: Colors.grey.shade200.withOpacity(0.5),
+                ),                
               ),
             ),
           ))),

@@ -32,13 +32,13 @@ class DatabaseHelper {
   void _onCreate(Database db, int version) async {
     // When creating the db, create the table
     await db.execute(
-        "CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
+        "CREATE TABLE User(id integer, name TEXT, lastname TEXT)");
     print("Created tables");
   }
 
   Future<int> saveUser(User user) async {
     var dbClient = await db;
-    int res = await dbClient.insert("User", user.toMap());
+    int res = await dbClient.insert("User", user.toMapUser());
     return res;
   }
 
@@ -52,5 +52,13 @@ class DatabaseHelper {
     var dbClient = await db;
     var res = await dbClient.query("User");
     return res.length > 0 ? true : false;
+  }
+
+  
+  Future<User> getUser() async {
+    var dbClient = await db;
+    List<Map> maps = await dbClient.query("User");
+    var user =maps.length == 0 ? null : User.fromJsonQuery(maps.first);
+    return user;
   }
 }

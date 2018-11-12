@@ -1,21 +1,23 @@
-import 'package:courier/utils/network_util.dart';
 import 'package:courier/models/user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 class RestDatasource {
-  NetworkUtil _netUtil = new NetworkUtil();
-  static final BASE_URL = "https://150.250.140.61:8700/login_app_backend";
-  static final LOGIN_URL = BASE_URL + "/login.php";
-  static final _API_KEY = "somerandomkey";
+  static final BASE_URL =
+      "http://localhost:8080/control/Servicio/services?user={0}&password={1}";
 
-  Future<User> login(String username, String password) async{
-    return _netUtil.post(LOGIN_URL, body: {
-      "token": _API_KEY,
-      "username": username,
-      "password": password
-    }).then((dynamic res) {
-      print(res.toString());
-      if(res["error"]) throw new Exception(res["error_msg"]);
-      return new User.map(res["user"]);
-    });
+  Future<User> login(String username, String password) async {
+    var url = BASE_URL.replaceAll("{0}", username).replaceAll("{1}", password);
+    final response = await http.post(url,
+    headers: {"Content-Type": "application/json"},
+    );
+    if (response.statusCode == 200) {
+      // If the call to the server was successful, parse the JSON
+      return User.fromJson(json.decode(response.body));
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load post');
+    }
   }
 }

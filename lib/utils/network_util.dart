@@ -9,7 +9,10 @@ class NetworkUtil {
   factory NetworkUtil() => _instance;
 
   final JsonDecoder _decoder = new JsonDecoder();
-
+  final map = {
+    'content-type':'application/json'
+  };
+  
   Future<dynamic> get(String url) {
     return http.get(url).then((http.Response response) {
       final String res = response.body;
@@ -22,10 +25,11 @@ class NetworkUtil {
     });
   }
 
-  Future<dynamic> post(String url, {Map headers, body, encoding}) async {
+  Future<dynamic> post(String url, {body, encoding}) async {
     try {
       final response = await http.post(url,
-          body: body, headers: headers, encoding: encoding);
+          body: body, headers: map, encoding: encoding);
+      print(response);
       if (response.statusCode == 200) {
         return _decoder.convert(response.body);
       } else {

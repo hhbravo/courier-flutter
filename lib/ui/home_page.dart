@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:courier/ui/orders_page.dart';
+import 'package:courier/models/user.dart';
 
 class DrawerItem {
   String title;
@@ -9,21 +10,26 @@ class DrawerItem {
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
+  final User user;
+
+  HomePage({this.user});
+  
   final drawerItems = [
-    new DrawerItem("Fragment 1", Icons.rss_feed),
-    new DrawerItem("Fragment 2", Icons.local_pizza),
-    new DrawerItem("Fragment 3", Icons.info)
-  ];
+    new DrawerItem("Mis Ordenes", Icons.assignment),
+    new DrawerItem("Historial", Icons.history),
+    new DrawerItem("Salir", Icons.power_settings_new)
+  ];  
 
   @override
   State<StatefulWidget> createState() {
-    return new _HomePageState();
+    return new _HomePageState(user: user);
   }
 }
 
 class _HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
-
+  final User user;
+  _HomePageState({this.user});
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
@@ -32,7 +38,6 @@ class _HomePageState extends State<HomePage> {
         return new Orders();
       case 2:
         return new Orders();
-
       default:
         return new Text("Error");
     }
@@ -58,9 +63,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     final userDrawer = new UserAccountsDrawerHeader(
-      accountName: new Text('Hans Code',
+      accountName: new Text(this.user.username,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      accountEmail: new Text('hans.herrerab@gmail.com',
+      accountEmail: new Text(this.user.lastname,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       currentAccountPicture: new GestureDetector(
         child: new CircleAvatar(
@@ -74,10 +79,9 @@ class _HomePageState extends State<HomePage> {
               image: new NetworkImage(
                   'https://media.licdn.com/dms/image/C4E16AQGNw5mXr6qkXA/profile-displaybackgroundimage-shrink_350_1400/0?e=1547078400&v=beta&t=FsEZD5U_PCXwqQWykT50yPW2xGik_fh3dGb0UPXEUq4'))),
     );
-
     return new Scaffold(
       appBar: new AppBar(
-        backgroundColor: Colors.yellow[600],
+        backgroundColor: Colors.blue[700],
         // here we display the title corresponding to the fragment
         // you can instead choose to have a static title
         title: new Text(widget.drawerItems[_selectedDrawerIndex].title),
@@ -88,6 +92,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
+    
     );
   }
 }

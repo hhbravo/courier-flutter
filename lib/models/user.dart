@@ -39,9 +39,9 @@ class User {
 
   Map<String, dynamic> toMapUser() {
     var map = new Map<String, dynamic>();
-    map["id"] = idusuario;
-    map["name"] = name;
-    map["lastname"] = lastname;
+    map["idusuario"] = idusuario;
+    map["nombres"] = name;
+    map["apellidos"] = lastname;
     return map;
   }
 
@@ -59,9 +59,9 @@ class User {
 
   factory User.fromJsonQuery(Map<String, dynamic> json) {
     return new User(
-      idusuario: json['id'],
-      usuario: json['name'],
-      apellidos: json['lastmane']
+      idusuario: json['idusuario'],
+      nombres: json['nombres'],
+      apellidos: json['apellidos']
       
     );
   }

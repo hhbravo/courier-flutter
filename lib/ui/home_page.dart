@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:courier/ui/orders_page.dart';
+import 'package:courier/ui/orders/orders_pade.dart';
 import 'package:courier/models/user.dart';
 
 class DrawerItem {
@@ -13,12 +14,12 @@ class HomePage extends StatefulWidget {
   final User user;
 
   HomePage({this.user});
-  
+
   final drawerItems = [
     new DrawerItem("Mis Ordenes", Icons.assignment),
     new DrawerItem("Historial", Icons.history),
     new DrawerItem("Salir", Icons.power_settings_new)
-  ];  
+  ];
 
   @override
   State<StatefulWidget> createState() {
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        return new Orders();
+        return new OrdersPage(user: this.user);
       case 1:
         return new Orders();
       case 2:
@@ -61,9 +62,9 @@ class _HomePageState extends State<HomePage> {
         onTap: () => _onSelectItem(i),
       ));
     }
-
+    print(this.user);
     final userDrawer = new UserAccountsDrawerHeader(
-      accountName: new Text(this.user.usuario,
+      accountName: new Text(this.user.nombres,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       accountEmail: new Text(this.user.apellidos,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
@@ -92,7 +93,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
-    
     );
   }
 }

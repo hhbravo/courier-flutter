@@ -6,9 +6,10 @@ import 'package:http/http.dart' as http;
 
 Future<Post> fetchPost() async {
   final response =
-      await http.get('https://jsonplaceholder.typicode.com/posts/1');
+      await http.get('http://10.17.199.199:9000/control/Servicio/services?user={0}&password={1}');
 
   if (response.statusCode == 200) {
+    print(response.body);
     // If the call to the server was successful, parse the JSON
     return Post.fromJson(json.decode(response.body));
   } else {

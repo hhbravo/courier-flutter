@@ -53,10 +53,7 @@ class _LoginPageState extends State<LoginPage>
       var user = await db.getUser();
       Navigator.push(
           _ctx,
-          MaterialPageRoute(
-              builder: (_ctx) => HomePage(
-                    user: user,
-                  )));
+          MaterialPageRoute( builder: (_ctx) => HomePage(  user: user, )));
     }
   }
 

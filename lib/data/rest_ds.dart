@@ -24,14 +24,21 @@ class RestDatasource {
   }
 
 
-  Future<Orders> orders(int id) async {
+  Future<List<Order>> orders(int id) async {
     var url = URL_ORDERS.replaceAll("{0}", id.toString());
     
     final response = await http.post(url, headers: {"Content-Type": "application/json"});
 
     if (response.statusCode == 200) {
+      List<Order> orders = [];
+      var jsonData = json.decode(response.body);
+
+      for (var u in jsonData) {
+          Order order = Order.fromJson(u);
+          orders.add(order);
+        }
       // If the call to the server was successful, parse the JSON
-      return Orders.fromJson(json.decode(response.body));
+      return orders;
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load post');

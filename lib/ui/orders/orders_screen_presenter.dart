@@ -11,7 +11,7 @@ class OrderScreenPresenter {
   RestDatasource api = new RestDatasource();
   OrderScreenPresenter(this._view);
 
-  orders(int id) {
+ /* orders(int id) {
     api.orders(id).then((Orders orders) {
       print(orders);
       _view.onOrderSuccess(orders);
@@ -19,5 +19,5 @@ class OrderScreenPresenter {
       print(error);
       _view.onLoginError(error.toString());
     });
-  }
+  }*/
 }

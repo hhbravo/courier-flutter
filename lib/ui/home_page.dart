@@ -63,9 +63,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     final userDrawer = new UserAccountsDrawerHeader(
-      accountName: new Text(this.user.username,
+      accountName: new Text(this.user.usuario,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      accountEmail: new Text(this.user.lastname,
+      accountEmail: new Text(this.user.apellidos,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       currentAccountPicture: new GestureDetector(
         child: new CircleAvatar(

@@ -6,8 +6,8 @@ void main() => runApp(new CourierApp());
 
 class CourierApp extends StatelessWidget {
    final routes = <String, WidgetBuilder>{
-    LoginPage.tag: (context) => LoginPage(),
-    HomePage.tag: (context) => HomePage(),
+    "login-page": (context) => LoginPage(),
+    "home-page": (context) => HomePage(),
   };
   // This widget is the root of your application.
   @override

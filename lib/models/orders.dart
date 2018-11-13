@@ -28,6 +28,8 @@ class Order {
   String longitud;
   String observaciones;
   String idusuario_crea;
+  String estado;
+  String name_estado;
 
   Order(
       {this.idcourier,
@@ -44,7 +46,8 @@ class Order {
       this.latitud,
       this.longitud,
       this.observaciones,
-      this.idusuario_crea});
+      this.idusuario_crea,
+      this.estado});
 
   Order.fromJson(Map<String, dynamic> json) {
     idcourier = json['idcourier'];
@@ -62,6 +65,25 @@ class Order {
     longitud = json['longitud'];
     observaciones = json['observaciones'];
     idusuario_crea = json['idusuario_crea'];
+    estado = json['estado'];
+    name_estado = status(json['estado']);
+  }
+
+  String status(status) {
+    switch (status) {
+      case '1':
+        return 'Pendiente';
+      case '2':
+        return 'Asignado';
+      case '3':
+        return 'Entregado';
+      case '4':
+        return 'Rechazado';
+      case '5':
+        return 'Cerrado';
+      default:
+        return 'Bloqueado';
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -81,5 +103,7 @@ class Order {
     data['longitud'] = this.longitud;
     data['observaciones'] = this.observaciones;
     data['idusuario_crea'] = this.idusuario_crea;
+    data['estado'] = this.estado;
+
   }
 }

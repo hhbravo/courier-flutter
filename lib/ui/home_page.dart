@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:courier/ui/orders_page.dart';
 import 'package:courier/ui/orders/orders_pade.dart';
 import 'package:courier/models/user.dart';
+import 'package:courier/data/database_helper.dart';
+import 'package:courier/ui/login/login_page.dart';
 
 class DrawerItem {
   String title;
@@ -18,7 +20,6 @@ class HomePage extends StatefulWidget {
   final drawerItems = [
     new DrawerItem("Mis Ordenes", Icons.assignment),
     new DrawerItem("Historial", Icons.history),
-    new DrawerItem("Salir", Icons.power_settings_new)
   ];
 
   @override
@@ -31,17 +32,25 @@ class _HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
   final User user;
   _HomePageState({this.user});
+
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
         return new OrdersPage(user: this.user);
       case 1:
         return new Orders();
-      case 2:
-        return new Orders();
       default:
         return new Text("Error");
     }
+  }
+
+  closeSession(context) async {
+    var db = new DatabaseHelper();
+    await db.deleteUsers();
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new LoginPage()));
   }
 
   _onSelectItem(int index) {
@@ -89,7 +98,18 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: new Drawer(
         child: new Column(
-          children: <Widget>[userDrawer, new Column(children: drawerOptions)],
+          children: <Widget>[
+            userDrawer,
+            new Column(children: drawerOptions),
+            new Divider(),
+            new ListTile(
+              title: new Text('Cerrar Sessión'),
+              leading:  const Icon(Icons.power_settings_new),
+              onTap: () {
+                closeSession(context);
+              },
+            ),
+          ],
         ),
       ),
       body: _getDrawerItemWidget(_selectedDrawerIndex),

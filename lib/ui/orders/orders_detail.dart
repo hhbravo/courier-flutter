@@ -15,6 +15,8 @@ class OrderDetailPage extends StatefulWidget {
 
 class _OrderDetailPageState extends State<OrderDetailPage>
     implements OrderScreenContract {
+  BuildContext _ctx;
+
   Map<String, double> _startLocation;
   Map<String, double> _currentLocation;
   StreamSubscription<Map<String, double>> _locationSubscription;
@@ -120,12 +122,14 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderSuccess(String result) async {
-    _showSnackBar(result);
     setState(() => _isLoading = false);
+    _showSnackBar('Se realizo el registro de manera exitosa');
+    Navigator.pop(_ctx);
   }
 
   @override
   Widget build(BuildContext context) {
+    _ctx = context;
     loadStatus();
     final observation = new Padding(
         padding: const EdgeInsets.all(8.0),

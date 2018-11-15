@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:courier/ui/orders_page.dart';
 import 'package:courier/ui/orders/orders_pade.dart';
 import 'package:courier/models/user.dart';
 import 'package:courier/data/database_helper.dart';
@@ -38,7 +37,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return new OrdersPage(user: this.user);
       case 1:
-        return new Orders();
+        return new OrdersPage(user: this.user);
       default:
         return new Text("Error");
     }

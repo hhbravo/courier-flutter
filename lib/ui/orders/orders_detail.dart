@@ -1,53 +1,65 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:courier/models/orders.dart';
+import 'package:courier/ui/orders/orders_screen_presenter.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 
 class OrderDetailPage extends StatefulWidget {
   Order order;
-
   OrderDetailPage({this.order});
 
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState(this.order);
 }
 
-class _OrderDetailPageState extends State<OrderDetailPage> {
-  final _formKey = GlobalKey<FormState>();
+class _OrderDetailPageState extends State<OrderDetailPage> 
+  implements OrderScreenContract{
+  Map<String, double> _startLocation;
+  Map<String, double> _currentLocation;
+
+  StreamSubscription<Map<String, double>> _locationSubscription;
+
+  Location _location = new Location();
+
   bool _permission = false;
-  String error;
+  bool _isLoading = false;
   bool currentWidget = true;
 
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+
   Order order;
-  var location = new Location();
-  Map<String, double> currentLocation = new Map();
-  StreamSubscription<Map<String, double>> locationSubscription;
+
+  String _observation;
+  String error;
+  
+  OrderScreenPresenter _presenter;
 
   _OrderDetailPageState(Order order) {
     this.order = order;
+    _presenter = new OrderScreenPresenter(this);
   }
 
   @override
   void initState() {
     super.initState();
-    currentLocation['latitude'] = 0.0;
-    currentLocation['longitude'] = 0.0;
-
     initPlatformState();
+    _locationSubscription =
+        _location.onLocationChanged().listen((Map<String, double> result) {
+      setState(() {
+        _currentLocation = result;
+      });
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(child: new Text('hola'));
-  }
-
-  void initPlatformState() async {
-    Map<String, double> _location;
+  initPlatformState() async {
+    Map<String, double> location;
     try {
-      _permission = await location.hasPermission();
-      _location = await location.getLocation();
-      error = '';
-    } catch (e) {
+      _permission = await _location.hasPermission();
+      location = await _location.getLocation();
+      error = null;
+    } on PlatformException catch (e) {
       if (e.code == 'PERMISSION_DENIED') {
         error = 'Permission denied';
       } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
@@ -57,7 +69,115 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       location = null;
     }
     setState(() {
-      currentLocation = _location;
+      _startLocation = location;
     });
+  }
+
+  void _showSnackBar(String text) {
+    scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text(text)));
+  }
+
+  void _submit() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      setState(() => _isLoading = true);
+      form.save();
+      _presenter.updateOrder(this.order.idcourier, _currentLocation["latitude"].toString(), _currentLocation["longitude"].toString(), _observation);
+    }
+  }
+
+  @override
+  void onOrderError(String errorTxt) {
+    print(errorTxt);
+    _showSnackBar(errorTxt);
+    setState(() => _isLoading = false);
+  }
+
+  @override
+  void onOrderSuccess(String result) async {
+    _showSnackBar(result);
+    setState(() => _isLoading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final observation = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          autofocus: false,
+          initialValue: '',
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            hintText: 'Observación',
+          ),
+          onSaved: (val) => _observation = val,
+        ));
+
+    final client = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          autofocus: false,
+          initialValue: this.order.cliente,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            hintText: 'Cliente',
+          ),
+        ));
+
+    final address = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          autofocus: false,
+          initialValue: this.order.direccion,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            hintText: 'Dirección',
+          ),
+        ));
+
+    final loginButton = new RaisedButton(
+      onPressed: _submit,
+      child: new Text("Guardar"),
+      color: Colors.blueAccent[100],
+    );
+
+    final loginForm = new Column(
+      children: <Widget>[
+        new Form(
+            key: formKey,
+            child: new Column(children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: client,
+              ),
+              new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: address,
+              ),
+              new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: observation,
+              ),
+            ]
+          )
+        ),
+        loginButton
+      ],
+      crossAxisAlignment: CrossAxisAlignment.center,
+    );
+
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: new AppBar(
+        title: new Text('Registro'),
+      ),
+      body: new Container(
+            child: new Container(
+              padding: new EdgeInsets.all(10.0),
+              child: loginForm,
+        ),
+      ),
+    );
   }
 }

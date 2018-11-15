@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:courier/models/orders.dart';
 import 'package:courier/models/user.dart';
 import 'package:courier/data/rest_ds.dart';
+import 'package:courier/ui/orders/orders_detail.dart';
 
 class OrdersPage extends StatefulWidget {
   static String tag = 'orders-page';
@@ -14,6 +15,7 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  BuildContext _ctx;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Orders orders;
   bool _isLoading = false;
@@ -31,6 +33,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   Widget build(BuildContext context) {
+    _ctx = context;
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.all(8.0),
@@ -61,7 +64,11 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   void _onTapItem(BuildContext context, Order order) {
-
+      Navigator.push(
+        _ctx,
+        new MaterialPageRoute(
+            builder: (BuildContext _ctx) => 
+            new OrderDetailPage(order: order)));  
   }
 
   String title(Order order) {

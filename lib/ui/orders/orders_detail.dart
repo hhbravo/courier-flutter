@@ -13,13 +13,11 @@ class OrderDetailPage extends StatefulWidget {
   _OrderDetailPageState createState() => _OrderDetailPageState(this.order);
 }
 
-class _OrderDetailPageState extends State<OrderDetailPage> 
-  implements OrderScreenContract{
+class _OrderDetailPageState extends State<OrderDetailPage>
+    implements OrderScreenContract {
   Map<String, double> _startLocation;
   Map<String, double> _currentLocation;
-
   StreamSubscription<Map<String, double>> _locationSubscription;
-
   Location _location = new Location();
 
   bool _permission = false;
@@ -32,13 +30,33 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   Order order;
 
   String _observation;
+  String _status;
+  String _selectedStatus;
   String error;
-  
+
+  List<DropdownMenuItem<String>> listDropStatus = [];
+
   OrderScreenPresenter _presenter;
 
   _OrderDetailPageState(Order order) {
     this.order = order;
     _presenter = new OrderScreenPresenter(this);
+  }
+
+  void loadStatus() {
+    listDropStatus = [];
+    List<String> drop = [
+      'Pendiente',
+      'Asignado',
+      'Entregado',
+      'Rechazado',
+      'Cerrado'
+    ];
+    int index = 0;
+    listDropStatus = drop
+        .map((val) => new DropdownMenuItem<String>(
+            child: new Text(val), value: (index++).toString()))
+        .toList();
   }
 
   @override
@@ -83,7 +101,13 @@ class _OrderDetailPageState extends State<OrderDetailPage>
     if (form.validate()) {
       setState(() => _isLoading = true);
       form.save();
-      _presenter.updateOrder(this.order.idcourier, _currentLocation["latitude"].toString(), _currentLocation["longitude"].toString(), _observation);
+      _presenter.updateOrder(
+          this.order.idcourier,
+          _currentLocation["latitude"].toString(),
+          _currentLocation["longitude"].toString(),
+          _observation,
+          this.order.idusuario_crea,
+          _selectedStatus);
     }
   }
 
@@ -102,6 +126,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    loadStatus();
     final observation = new Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
@@ -120,9 +145,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
           autofocus: false,
           initialValue: this.order.cliente,
           keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: 'Cliente',
-          ),
+          decoration: InputDecoration(hintText: 'Cliente', enabled: true),
         ));
 
     final address = new Padding(
@@ -131,9 +154,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
           autofocus: false,
           initialValue: this.order.direccion,
           keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintText: 'Dirección',
-          ),
+          decoration: InputDecoration(hintText: 'Dirección', enabled: true),
         ));
 
     final loginButton = new RaisedButton(
@@ -142,42 +163,41 @@ class _OrderDetailPageState extends State<OrderDetailPage>
       color: Colors.blueAccent[100],
     );
 
-    final loginForm = new Column(
-      children: <Widget>[
-        new Form(
-            key: formKey,
-            child: new Column(children: <Widget>[
-              new Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: client,
-              ),
-              new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: address,
-              ),
-              new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: observation,
-              ),
-            ]
-          )
-        ),
-        loginButton
-      ],
-      crossAxisAlignment: CrossAxisAlignment.center,
+    final statusDrop = new Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: new DropdownButton(
+          items: listDropStatus,
+          value: _selectedStatus,
+          iconSize: 40.0,
+          elevation: 16,
+          hint: new Text('Estado'),
+          onChanged: (value) {
+            _selectedStatus = value;
+            setState(() {});
+          },
+        ));
+
+    final loginForm = new Form(
+      key: formKey,
+      autovalidate: true,
+      child: new ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          children: <Widget>[
+            client,
+            address,
+            observation,
+            statusDrop,
+            loginButton,
+          ]),
     );
 
     return Scaffold(
       key: scaffoldKey,
       appBar: new AppBar(
+        backgroundColor: Colors.blue[700],
         title: new Text('Registro'),
       ),
-      body: new Container(
-            child: new Container(
-              padding: new EdgeInsets.all(10.0),
-              child: loginForm,
-        ),
-      ),
+      body: new SafeArea(top: false, bottom: false, child: loginForm),
     );
   }
 }

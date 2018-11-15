@@ -64,6 +64,7 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   void _onTapItem(BuildContext context, Order order) {
+    order.idusuario_crea = this.id.toString();
       Navigator.push(
         _ctx,
         new MaterialPageRoute(

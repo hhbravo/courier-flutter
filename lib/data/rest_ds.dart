@@ -8,7 +8,7 @@ class RestDatasource {
   static final BASE_URL = "http://www.choice-aduanas.com.pe/control/servicio/";
   static final URL_LOGIN = BASE_URL + 'services?user={0}&password={1}';
   static final URL_ORDERS = BASE_URL + 'orden?user={0}';
-  static final URL_UPDATE_ORDER = BASE_URL + 'updateOrden?latitud={0}&longitud={1}&observacion={2}&id={3}';
+  static final URL_UPDATE_ORDER = BASE_URL + 'updateOrden?idcourier={0}&user={1}&latitud={2}&longitud={3}&observacion={4}&estado={5}';
 
   Future<User> login(String username, String password) async {
     var url = URL_LOGIN.replaceAll("{0}", username).replaceAll("{1}", password);
@@ -46,8 +46,9 @@ class RestDatasource {
     }
   }
 
-  Future<String> updateOrder(String id, String lat, String lon, String observation) async {
-    var url = URL_UPDATE_ORDER.replaceAll("{0}", lat).replaceAll("{1}", lon).replaceAll("{2}", observation).replaceAll("{3}", id);
+  Future<String> updateOrder(String idOrder, String lat, String lon, String observation, String idUser, String status) async {
+    var url = URL_UPDATE_ORDER.replaceAll("{0}", idOrder).replaceAll("{1}", idUser)
+    .replaceAll("{2}", lat).replaceAll("{3}", lon).replaceAll("{4}", observation).replaceAll("{5}", status);
     final response = await http.post(url, headers: {"Content-Type": "application/json"});
 
     if (response.statusCode == 200) {

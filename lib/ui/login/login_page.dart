@@ -155,8 +155,7 @@ class _LoginPageState extends State<LoginPage>
       body: new Container(
           decoration: new BoxDecoration(
             image: new DecorationImage(
-                image: new NetworkImage(
-                    'http://www.choice-aduanas.com.pe/wp-content/uploads/revslider/sliderdp/sydney-04_optimised_carosel-2.jpg'),
+                image: new AssetImage("assets/images/aduana.jpg",),
                 fit: BoxFit.fill),
           ),
           child: new Center(

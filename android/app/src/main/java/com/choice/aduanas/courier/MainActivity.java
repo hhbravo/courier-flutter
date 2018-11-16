@@ -1,4 +1,4 @@
-package com.example.courier;
+package com.choice.aduanas.courier;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

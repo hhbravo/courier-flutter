@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
   final drawerItems = [
     new DrawerItem("Mis Ordenes", Icons.assignment),
-    new DrawerItem("Historial", Icons.history),
+    //new DrawerItem("Historial", Icons.history),
   ];
 
   @override
@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
     switch (pos) {
       case 0:
         return new OrdersPage(user: this.user);
-      case 1:
-        return new OrdersPage(user: this.user);
+     /* case 1:
+        return new OrdersPage(user: this.user);*/
       default:
         return new Text("Error");
     }
@@ -69,20 +69,13 @@ class _HomePageState extends State<HomePage> {
     }
     final userDrawer = new UserAccountsDrawerHeader(
       accountName: new Text(this.user.nombres,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
       accountEmail: new Text(this.user.apellidos,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      currentAccountPicture: new GestureDetector(
-        child: new CircleAvatar(
-          backgroundImage: new NetworkImage(
-              'https://media.licdn.com/dms/image/C4E03AQG03m8cmOmULw/profile-displayphoto-shrink_200_200/0?e=1547078400&v=beta&t=Z8L1ucwfX_5mjqMtiwCqHVcbcLAD-H1FXCAbDR67r6M'),
-        ),
-      ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
       decoration: new BoxDecoration(
           image: new DecorationImage(
               fit: BoxFit.fill,
-              image: new NetworkImage(
-                  'https://media.licdn.com/dms/image/C4E16AQGNw5mXr6qkXA/profile-displaybackgroundimage-shrink_350_1400/0?e=1547078400&v=beta&t=FsEZD5U_PCXwqQWykT50yPW2xGik_fh3dGb0UPXEUq4'))),
+              image: new AssetImage("assets/images/map.png",))),
     );
     return new Scaffold(
       appBar: new AppBar(

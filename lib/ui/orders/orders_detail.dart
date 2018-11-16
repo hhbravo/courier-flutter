@@ -42,23 +42,15 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   _OrderDetailPageState(Order order) {
     this.order = order;
     _presenter = new OrderScreenPresenter(this);
-    _selectedStatus = order.estado;
   }
 
   void loadStatus() {
     listDropStatus = [];
-    List<String> drop = [
-      'Pendiente',
-      'Asignado',
-      'Entregado',
-      'Rechazado',
-      'Cerrado'
-    ];
-    int index = 1;
-    listDropStatus = drop
-        .map((val) => new DropdownMenuItem<String>(
-            child: new Text(val), value: (index++).toString()))
-        .toList();
+    listDropStatus.add(new DropdownMenuItem<String>(
+            child: new Text('Entregado'), value: '3'));
+            listDropStatus.add(new DropdownMenuItem<String>(
+            child: new Text('Rechazado'), value: '4'));
+        
   }
 
   @override
@@ -111,13 +103,12 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderError(String errorTxt) {
-    _showSnackBar(errorTxt);
+    _showSnackBar('Ingrese el estado');
   }
 
   @override
   void onOrderSuccess(String result) async {
-    _showSnackBar('Se realizo el registro de manera exitosa');
-    Navigator.pop(_ctx);
+     Navigator.pop(_ctx, result);
   }
 
   @override

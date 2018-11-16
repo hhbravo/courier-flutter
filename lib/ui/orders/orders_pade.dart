@@ -70,18 +70,20 @@ class _OrdersPageState extends State < OrdersPage >  {
   void _onTapItem(BuildContext context ,Order order)async {
     order.idusuario_crea = this.id.toString(); 
        Map results = await Navigator.push(
-        _ctx, 
+        context, 
         new MaterialPageRoute(
-            builder:(BuildContext _ctx) => 
+            builder:(BuildContext context) => 
             new OrderDetailPage(order:order))); 
-    _showSnackBar('Se realizó el registro exitosamente'); 
+    if( results != null){
+      _showSnackBar('Se realizó el registro exitosamente'); 
+    }
     _getOrders(); 
-     print(results); 
+     
   }
 
   void _showSnackBar(String text) {
     scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content:new Text(text, style: TextStyle(color: Colors.blueAccent[200]),))); 
+        .showSnackBar(new SnackBar(content:new Text(text, style: TextStyle(color: Colors.blueAccent[200]),textAlign: TextAlign.center,))); 
   }
 
   String title(Order order) {

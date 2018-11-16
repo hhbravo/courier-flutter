@@ -108,7 +108,8 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderSuccess(String result) async {
-     Navigator.pop(_ctx, result);
+    var results = {"result" : "$result"};
+    Navigator.pop(_ctx,  results);
   }
 
   @override

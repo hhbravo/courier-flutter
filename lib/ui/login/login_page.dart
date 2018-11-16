@@ -82,8 +82,7 @@ class _LoginPageState extends State<LoginPage>
         backgroundColor: Colors.transparent,
         radius: 48.0,
         child: new Image(
-          image: new NetworkImage(
-              'http://www.choice-aduanas.com.pe/wp-content/uploads/2018/04/ChoicelogoSEO.png'),
+          image: new AssetImage('assets/images/ChoicelogoSEO.png'),
         ),
       ),
     );

@@ -46,10 +46,7 @@ class _HomePageState extends State<HomePage> {
   closeSession(context) async {
     var db = new DatabaseHelper();
     await db.deleteUsers();
-    Navigator.push(
-        context,
-        new MaterialPageRoute(
-            builder: (BuildContext context) => new LoginPage()));
+    Navigator.of(context).pushNamedAndRemoveUntil(LoginPage.tag, (Route<dynamic> route) => false);
   }
 
   _onSelectItem(int index) {
@@ -70,7 +67,6 @@ class _HomePageState extends State<HomePage> {
         onTap: () => _onSelectItem(i),
       ));
     }
-    print(this.user);
     final userDrawer = new UserAccountsDrawerHeader(
       accountName: new Text(this.user.nombres,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),

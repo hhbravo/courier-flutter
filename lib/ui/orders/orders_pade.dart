@@ -22,6 +22,12 @@ class _OrdersPageState extends State<OrdersPage> {
   int id;
   RestDatasource rest;
 
+  
+  @override
+  void initState() {
+    super.initState();
+  }
+
   _OrdersPageState(User user) {
     rest = new RestDatasource();
     this.id = user.idusuario;
@@ -36,8 +42,10 @@ class _OrdersPageState extends State<OrdersPage> {
     _ctx = context;
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.all(8.0),
-      child: new FutureBuilder(
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+      child:  new RefreshIndicator(
+        onRefresh: _getOrders,
+        child: new FutureBuilder(
           future: _getOrders(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data == null) {
@@ -60,6 +68,7 @@ class _OrdersPageState extends State<OrdersPage> {
               );
             }
           }),
+      )      
     );
   }
 
@@ -73,11 +82,11 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   String title(Order order) {
-    return 'Cliente: ' + order.cliente + ' | ' + 'Prioridad :' + order.prioridad;
+    return 'Cliente: ' + order.cliente + ' | ' + 'Prioridad: ' + order.prioridad;
   }
 
   String subtitle(Order order) {
-    return 'Dirección: ' + order.direccion + ' | ' + 'Estado :' + order.name_estado;
+    return 'Dirección: ' + order.direccion + ' | ' + 'Estado: ' + order.name_estado;
   }
 
   

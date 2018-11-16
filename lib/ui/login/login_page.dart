@@ -47,7 +47,6 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   onAuthStateChanged(AuthState state) async {
-    print(state);
     if (state == AuthState.LOGGED_IN) {
       var db = new DatabaseHelper();
       var user = await db.getUser();
@@ -59,7 +58,6 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void onLoginError(String errorTxt) {
-    print(errorTxt);
     _showSnackBar(errorTxt);
     setState(() => _isLoading = false);
   }

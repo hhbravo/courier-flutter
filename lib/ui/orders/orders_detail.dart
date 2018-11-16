@@ -32,7 +32,6 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   Order order;
 
   String _observation;
-  String _status;
   String _selectedStatus;
   String error;
 
@@ -43,6 +42,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   _OrderDetailPageState(Order order) {
     this.order = order;
     _presenter = new OrderScreenPresenter(this);
+    _selectedStatus = order.estado;
   }
 
   void loadStatus() {
@@ -54,7 +54,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
       'Rechazado',
       'Cerrado'
     ];
-    int index = 0;
+    int index = 1;
     listDropStatus = drop
         .map((val) => new DropdownMenuItem<String>(
             child: new Text(val), value: (index++).toString()))
@@ -88,9 +88,6 @@ class _OrderDetailPageState extends State<OrderDetailPage>
       }
       location = null;
     }
-    setState(() {
-      _startLocation = location;
-    });
   }
 
   void _showSnackBar(String text) {
@@ -101,7 +98,6 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   void _submit() {
     final form = formKey.currentState;
     if (form.validate()) {
-      setState(() => _isLoading = true);
       form.save();
       _presenter.updateOrder(
           this.order.idcourier,
@@ -115,14 +111,11 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderError(String errorTxt) {
-    print(errorTxt);
     _showSnackBar(errorTxt);
-    setState(() => _isLoading = false);
   }
 
   @override
   void onOrderSuccess(String result) async {
-    setState(() => _isLoading = false);
     _showSnackBar('Se realizo el registro de manera exitosa');
     Navigator.pop(_ctx);
   }
@@ -162,9 +155,9 @@ class _OrderDetailPageState extends State<OrderDetailPage>
         ));
 
     final loginButton = new RaisedButton(
-      onPressed: _submit,
       child: new Text("Guardar"),
       color: Colors.blueAccent[100],
+      onPressed: _submit,
     );
 
     final statusDrop = new Padding(
@@ -177,7 +170,6 @@ class _OrderDetailPageState extends State<OrderDetailPage>
           hint: new Text('Estado'),
           onChanged: (value) {
             _selectedStatus = value;
-            setState(() {});
           },
         ));
 
@@ -189,8 +181,8 @@ class _OrderDetailPageState extends State<OrderDetailPage>
           children: <Widget>[
             client,
             address,
-            observation,
             statusDrop,
+            observation,            
             loginButton,
           ]),
     );

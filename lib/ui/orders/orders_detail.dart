@@ -46,40 +46,22 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   void loadStatus() {
     listDropStatus = [];
-    listDropStatus.add(new DropdownMenuItem<String>(
-            child: new Text('Entregado'), value: '3'));
-            listDropStatus.add(new DropdownMenuItem<String>(
-            child: new Text('Rechazado'), value: '4'));
-        
+    listDropStatus.add(
+        new DropdownMenuItem<String>(child: new Text('Entregado'), value: '3'));
+    listDropStatus.add(
+        new DropdownMenuItem<String>(child: new Text('Rechazado'), value: '4'));
   }
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-    _locationSubscription =
-        _location.onLocationChanged().listen((Map<String, double> result) {
-      setState(() {
-        _currentLocation = result;
-      });
-    });
-  }
-
-  initPlatformState() async {
-    Map<String, double> location;
-    try {
-      _permission = await _location.hasPermission();
-      location = await _location.getLocation();
-      error = null;
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        error = 'Permission denied';
-      } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
-        error =
-            'Permission denied - please ask the user to enable it from the app settings';
+    _locationSubscription = _location.onLocationChanged().listen((Map<String, double> result) {
+      if (this.mounted) {
+        setState(() {
+          _currentLocation = result;
+        });
       }
-      location = null;
-    }
+    });
   }
 
   void _showSnackBar(String text) {
@@ -108,8 +90,8 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderSuccess(String result) async {
-    var results = {"result" : "$result"};
-    Navigator.pop(_ctx,  results);
+    var results = {"result": "$result"};
+    Navigator.pop(_ctx, results);
   }
 
   @override
@@ -174,7 +156,7 @@ class _OrderDetailPageState extends State<OrderDetailPage>
             client,
             address,
             statusDrop,
-            observation,            
+            observation,
             loginButton,
           ]),
     );

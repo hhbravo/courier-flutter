@@ -1,14 +1,24 @@
 class Orders {
-  List<Order> orders;
+  List<Order> order;
+  int count = 0;
 
-  Orders({this.orders});
+  Orders({this.order});
 
-  Orders.fromJson(List ordersList) {
-    print(ordersList);
-    orders = new List<Order>();
-    for (int i = 0; i < ordersList.length; i++) {
-      orders.add(Order.fromJson(ordersList[i]));
+  static List<Order> createRepositoryList(List repositories) {
+    List<Order> listOrder = new List();
+    for(int i=0; i< repositories.length ; i++){
+      listOrder.add(Order.fromJson(repositories[i]));
     }
+    print(listOrder);
+    return listOrder;
+  }
+
+   Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.order != null) {
+      data['order'] = this.order.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
@@ -49,27 +59,7 @@ class Order {
       this.idusuario_crea,
       this.estado});
 
-  Order.fromJson(Map<String, dynamic> json) {
-    idcourier = json['idcourier'];
-    annio = json['annio'];
-    nro_orden = json['nro_orden'];
-    prioridad = json['prioridad'];
-    cliente = json['cliente'];
-    contacto = json['contacto'];
-    telefono_contacto = json['telefono_contacto'];
-    idusuario_asignado = json['idusuario_asignado'];
-    direccion = json['direccion'];
-    fch_creacion = json['fch_creacion'];
-    fch_entrega = json['fch_entrega'];
-    latitud = json['latitud'];
-    longitud = json['longitud'];
-    observaciones = json['observaciones'];
-    idusuario_crea = json['idusuario_crea'];
-    estado = json['estado'];
-    name_estado = status(json['estado']);
-  }
-
-  String status(status) {
+  static String status(status) {
     switch (status) {
       case '1':
         return 'Pendiente';
@@ -104,6 +94,26 @@ class Order {
     data['observaciones'] = this.observaciones;
     data['idusuario_crea'] = this.idusuario_crea;
     data['estado'] = this.estado;
+  }
 
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return new Order(
+      idcourier: json['idcourier'],
+      annio: json['annio'],
+      nro_orden: json['nro_orden'],
+      prioridad: json['prioridad'],
+      cliente: json['cliente'],
+      contacto: json['contacto'],
+      telefono_contacto: json['telefono_contacto'],
+      idusuario_asignado: json['idusuario_asignado'],
+      direccion: json['direccion'],
+      fch_creacion: json['fch_creacion'],
+      fch_entrega: json['fch_entrega'],
+      latitud: json['latitud'],
+      longitud: json['longitud'],
+      observaciones: json['observaciones'],
+      idusuario_crea: json['idusuario_crea'],
+      estado: json['estado'],
+    );
   }
 }

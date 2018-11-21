@@ -1,75 +1,85 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:courier/models/orders.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<Post> fetchPost() async {
-  final response =
-      await http.get('http://10.17.199.199:9000/control/Servicio/services?user={0}&password={1}');
-
-  if (response.statusCode == 200) {
-    print(response.body);
-    // If the call to the server was successful, parse the JSON
-    return Post.fromJson(json.decode(response.body));
-  } else {
-    // If that call was not successful, throw an error.
-    throw Exception('Failed to load post');
-  }
-}
-
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
-
-  Post({this.userId, this.id, this.title, this.body});
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
-}
-
-void main() => runApp(MyApp(post: fetchPost()));
+void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  final Future<Post> post;
-
-  MyApp({Key key, this.post}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fetch Data Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return new MaterialApp(
+      title: 'Flutter Demo',
+      theme: new ThemeData(
+        primarySwatch: Colors.purple,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Fetch Data Example'),
-        ),
-        body: Center(
-          child: FutureBuilder<Post>(
-            future: post,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data.title);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
+      home: new MyHomePage(),
+    );
+  }
+}
 
-              // By default, show a loading spinner
-              return CircularProgressIndicator();
-            },
-          ),
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => new _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _count = 0;
+  List<Order> orders;
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Home Page"),
+      ),
+      body: Container(
+        child: FutureBuilder(
+          future: fetchData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return RefreshIndicator(
+                onRefresh: _handleRefresh,
+                child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(snapshot.data[index].idcourier),
+                      );
+                    }),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );
+  }
+
+    Future<Null> _handleRefresh() async {
+    await new Future.delayed(new Duration(seconds: 3));
+    setState(() {
+    });
+    return null;
+  }
+
+  Future<List<Order>> fetchData() async {
+    var URL_ORDERS =
+        "http://www.choice-aduanas.com.pe/control/servicio/orden?user=39";
+
+    await new Future.delayed(new Duration(seconds: 5));
+    orders = [];
+    final response = await http.get(
+      URL_ORDERS
+    );
+    if (response.statusCode == 200) {
+      orders = Orders.createRepositoryList(json.decode(response.body));
+    }
+    print(orders.length);
+    return orders;
   }
 }

@@ -17,110 +17,71 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
-  BuildContext _ctx;
-  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  Orders orders;
-  bool _isLoading = false;
   int id;
   RestDatasource rest;
-  List<Order> _listContent;
-  var URL_ORDERS =
-      "http://www.choice-aduanas.com.pe/control/servicio/orden?user={0}";
+  List<Order> orders;
+  var URL_ORDERS = "http://www.choice-aduanas.com.pe/control/servicio/orden?user={0}";
   var url;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
+  int count = 1;
 
   _OrdersPageState(User user) {
     rest = new RestDatasource();
     id = user.idusuario;
   }
 
+
   Future<List<Order>> fetchData() async {
-    url = URL_ORDERS.replaceAll("{0}", id.toString());
+    var url =
+        "http://www.choice-aduanas.com.pe/control/servicio/orden?user={0}";
+
     await new Future.delayed(new Duration(seconds: 5));
+    orders = [];
+    final response = await http.get(
+      url.replaceAll('{0}', id.toString()));
 
-    final response = await http.get(url);
     if (response.statusCode == 200) {
-      return Orders.createRepositoryList(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load repository, Try again in 1000 years');
+      orders = Orders.createRepositoryList(json.decode(response.body));
     }
-  }
-
-  Future<Null> _handleRefresh() async {
-    _refreshIndicatorKey.currentState?.show(atTop: false);
-    Completer<Null> completer = new Completer<Null>();
-      Timer timer = new Timer(new Duration(seconds: 3), () {
-      fetchData();
-      completer.complete();
-    });
-    return completer.future;
-
+    return orders;
   }
 
   @override
   Widget build(BuildContext context) {
-    _ctx = context;
-
-    var futureBuilder = new FutureBuilder(
-      future: fetchData(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return Container(child: Center(child: new Text('cargando...')));
-            default:
-              if (snapshot.hasError)
-                return new Text('Error: ${snapshot.error}');
-              else
-                return new Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: new RefreshIndicator(
-                          child: createListView(context, snapshot),
-                          onRefresh: _handleRefresh,
-                          ),
-
-                    )
-                  ],
+    return Container(
+      child: FutureBuilder(
+          future: fetchData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return RefreshIndicator(
+                onRefresh: _handleRefresh,
+                child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return  Column(children: <Widget>[
+                        ListTile(
+                          contentPadding: EdgeInsets.all(16.0),
+                          title: Text(title(snapshot.data[i])),
+                          subtitle: Text(subtitle(snapshot.data[i])),
+                          onTap: () => _onTapItem(context, snapshot.data[i]),
+                        ),
+                        Divider(height: 2.0, color: Colors.blueAccent[700],)
+                      ]);
+                      
+                    }),
                 );
-          }
-        } else if (snapshot.hasError) {
-          return Center(
-              child: Text(
-            "No tiene ordenes asignados",
-          ));
-        }
-        return Center(child: CircularProgressIndicator());
-      },
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
-
-    return Scaffold(body: futureBuilder);
   }
 
-  Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
-    List<Order> values = snapshot.data;
-    return new ListView.builder(
-      itemCount: values.length,
-      itemBuilder: (BuildContext context, int i) {
-        return new Column(
-          children: <Widget>[
-            ListTile(
-                title: Text(title(values[i])),
-                subtitle: Text(subtitle(values[i])),
-                onTap: () => _onTapItem(context, values[i])),
-            Divider(
-              height: 2.0,
-            )
-          ],
-        );
-      },
-    );
+  Future<Null> _handleRefresh() async {
+    await new Future.delayed(new Duration(seconds: 5));
+    setState(() {});
+    return null;
   }
 
   void _onTapItem(BuildContext context, Order order) async {
@@ -132,8 +93,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 new OrderDetailPage(order: order)));
     if (results != null) {
       _showSnackBar('Se realizó el registro exitosamente');
-    }
-    fetchData();
+    }    
   }
 
   void _showSnackBar(String text) {

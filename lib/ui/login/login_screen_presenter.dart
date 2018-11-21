@@ -12,12 +12,12 @@ class LoginScreenPresenter {
   LoginScreenPresenter(this._view);
 
   doLogin(String username, String password) {
-    api.login(username, password).then((User user) {
-      print(user);
-      _view.onLoginSuccess(user);
-    }).catchError((Exception error) {
-      print(error);
+    try {
+      api.login(username, password).then((User user) {
+        _view.onLoginSuccess(user);
+      });
+    } on Exception catch (error) {
       _view.onLoginError(error.toString());
-    });
+    }
   }
 }

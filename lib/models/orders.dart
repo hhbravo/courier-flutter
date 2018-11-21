@@ -9,7 +9,6 @@ class Orders {
     for(int i=0; i< repositories.length ; i++){
       listOrder.add(Order.fromJson(repositories[i]));
     }
-    print(listOrder);
     return listOrder;
   }
 

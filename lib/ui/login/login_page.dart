@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage>
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           autofocus: false,
-          initialValue: 'jcanedo',
+          initialValue: '',
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
               hintText: 'Usuario',
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage>
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           autofocus: false,
-          initialValue: '123456',
+          initialValue: '',
           decoration: InputDecoration(
               hintText: 'Password',
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -134,11 +134,11 @@ class _LoginPageState extends State<LoginPage>
                 child: heroLogo,
               ),
               new Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: user,
               ),
               new Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: password,
               ),
             ],

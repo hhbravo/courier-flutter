@@ -16,12 +16,16 @@ class RestDatasource {
 
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
-      user =  User.fromJson(json.decode(response.body));
-      return user;
+      if(response.body.trim().length    > 0) {
+          user =  User.fromJson(json.decode(response.body));
+          return user;
+      } else {
+        throw Exception('Usuario no registrado');
+      }
+
     } else {
-      print(response);
       // If that call was not successful, throw an error.
-      throw Exception('Failed to load post');
+      throw Exception('Ocurrío un error');
     }
   }
 

@@ -30,18 +30,28 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   final formKey = GlobalKey<FormState>();
 
   Order order;
-
   String _observation;
   String _selectedStatus;
   String error;
 
   List<DropdownMenuItem<String>> listDropStatus = [];
-
   OrderScreenPresenter _presenter;
-
   _OrderDetailPageState(Order order) {
     this.order = order;
     _presenter = new OrderScreenPresenter(this);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    initPlatformState();
+
+    _location.onLocationChanged().listen((Map<String, double> result) {
+      setState(() {
+        _currentLocation = result;
+      });
+    });
   }
 
   void loadStatus() {
@@ -52,7 +62,6 @@ class _OrderDetailPageState extends State<OrderDetailPage>
         new DropdownMenuItem<String>(child: new Text('Rechazado'), value: '4'));
   }
 
-  
   initPlatformState() async {
     Map<String, double> location;
     try {
@@ -61,10 +70,9 @@ class _OrderDetailPageState extends State<OrderDetailPage>
       error = null;
     } on PlatformException catch (e) {
       if (e.code == 'PERMISSION_DENIED') {
-        error = 'Permission denied';
+        error = 'Permiso denegado para usar el gps';
       } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
-        error =
-            'Permission denied - please ask the user to enable it from the app settings';
+        error = 'Permiso denegado, por favor habilite y configure gps';
       }
       location = null;
     }
@@ -82,18 +90,16 @@ class _OrderDetailPageState extends State<OrderDetailPage>
   void _submit() {
     final form = formKey.currentState;
     if (form.validate()) {
+      setState(() => _isLoading = true);
       form.save();
-      initPlatformState();
-      _locationSubscription =
-          _location.onLocationChanged().listen((Map<String, double> result) {
-        setState(() {
-          _currentLocation = result;
-        });
-      });
       _presenter.updateOrder(
           this.order.idcourier,
-          _currentLocation["latitude"].toString(),
-          _currentLocation["longitude"].toString(),
+          _currentLocation != null
+              ? _currentLocation["latitude"].toString()
+              : '',
+          _currentLocation != null
+              ? _currentLocation["longitude"].toString()
+              : '',
           _observation,
           this.order.idusuario_crea,
           _selectedStatus);
@@ -102,11 +108,13 @@ class _OrderDetailPageState extends State<OrderDetailPage>
 
   @override
   void onOrderError(String errorTxt) {
+    setState(() => _isLoading = true);
     _showSnackBar('Ingrese el estado');
   }
 
   @override
   void onOrderSuccess(String result) async {
+    setState(() => _isLoading = true);
     var results = {"result": "$result"};
     Navigator.pop(_ctx, results);
   }
@@ -158,9 +166,11 @@ class _OrderDetailPageState extends State<OrderDetailPage>
           value: _selectedStatus,
           iconSize: 40.0,
           elevation: 16,
-          hint: new Text('Estado'),
+          hint: new Text('Seleccione estado'),
           onChanged: (value) {
-            _selectedStatus = value;
+            setState(() {
+              _selectedStatus = value;
+            });
           },
         ));
 
@@ -174,7 +184,12 @@ class _OrderDetailPageState extends State<OrderDetailPage>
             address,
             statusDrop,
             observation,
-            loginButton,
+            new Container(
+              child: new Center(
+                child: _isLoading ? new CircularProgressIndicator() : loginButton,
+              ),
+              height: 40,
+            )
           ]),
     );
 

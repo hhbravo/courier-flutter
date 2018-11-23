@@ -79,7 +79,7 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   Future<Null> _handleRefresh() async {
-    await new Future.delayed(new Duration(seconds: 5));
+    await new Future.delayed(new Duration(seconds: 2));
     setState(() {});
     return null;
   }
